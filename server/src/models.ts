@@ -1,0 +1,19 @@
+import mongoose, { Schema } from 'mongoose';
+
+const userSchema = new Schema({ name: { type: String, required: true, trim: true }, email: { type: String, required: true, unique: true, lowercase: true, trim: true }, passwordHash: { type: String, required: true }, role: { type: String, enum: ['brand', 'creator', 'admin'], required: true }, createdAt: { type: Date, default: Date.now } });
+const organizationSchema = new Schema({ name: { type: String, required: true }, owner: { type: Schema.Types.ObjectId, ref: 'User', required: true }, industry: String, website: String }, { timestamps: true });
+const campaignSchema = new Schema({ organization: { type: Schema.Types.ObjectId, ref: 'Organization', required: true, index: true }, createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, title: { type: String, required: true }, description: { type: String, required: true }, niche: String, platforms: [String], budgetMin: Number, budgetMax: Number, currency: { type: String, default: 'USD' }, deadline: Date, status: { type: String, enum: ['draft', 'published', 'paused', 'closed'], default: 'draft', index: true }, createdAt: { type: Date, default: Date.now } }, { timestamps: true });
+const applicationSchema = new Schema({ campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: true }, creator: { type: Schema.Types.ObjectId, ref: 'User', required: true }, pitch: { type: String, required: true }, proposedRate: Number, status: { type: String, enum: ['submitted', 'shortlisted', 'rejected', 'offer'], default: 'submitted' } }, { timestamps: true });
+applicationSchema.index({ campaign: 1, creator: 1 }, { unique: true });
+const creatorProfileSchema = new Schema({ user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true, index: true }, displayName: { type: String, required: true }, username: { type: String, trim: true, lowercase: true }, bio: { type: String, maxlength: 2000, default: '' }, niches: { type: [String], default: [] }, pastBrands: { type: [String], default: [] }, onboardingCompleted: { type: Boolean, default: false }, country: String, city: String, languages: { type: [String], default: [] }, startingRate: Number, currency: { type: String, default: 'USD' }, avatarUrl: String, isPublic: { type: Boolean, default: false, index: true }, completedAt: Date }, { timestamps: true });
+creatorProfileSchema.index({ isPublic: 1, niches: 1, updatedAt: -1 });
+creatorProfileSchema.index({ username: 1 }, { unique: true, sparse: true });
+const socialAccountSchema = new Schema({ creator: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true }, provider: { type: String, required: true }, platform: { type: String, required: true }, externalId: { type: String, required: true }, handle: String, displayName: String, profileUrl: String, description: String, avatarUrl: String, followers: Number, views: Number, videos: Number, country: String, recentVideos: [Schema.Types.Mixed], source: String, consentGrantedAt: Date, lastAttemptAt: Date, lastErrorCode: String, verification: { type: String, enum: ['verified', 'provider-reported', 'self-reported', 'unverified'], default: 'unverified' }, fetchedAt: Date, expiresAt: Date, nextSyncAt: Date }, { timestamps: true });
+socialAccountSchema.index({ provider: 1, platform: 1, externalId: 1 }, { unique: true });
+socialAccountSchema.index({ platform: 1, consentGrantedAt: 1, nextSyncAt: 1, expiresAt: 1 });
+export const User = mongoose.model('User', userSchema);
+export const Organization = mongoose.model('Organization', organizationSchema);
+export const Campaign = mongoose.model('Campaign', campaignSchema);
+export const Application = mongoose.model('Application', applicationSchema);
+export const CreatorProfile = mongoose.model('CreatorProfile', creatorProfileSchema);
+export const SocialAccount = mongoose.model('SocialAccount', socialAccountSchema);

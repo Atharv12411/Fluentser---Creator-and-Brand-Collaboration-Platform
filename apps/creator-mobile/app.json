@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Fluentser Creator",
+    "slug": "fluentser-creator",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#f7f6f3" },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.fluentser.creator" },
+    "android": { "package": "com.fluentser.creator" },
+    "web": { "bundler": "metro" }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "fluentser",
+  "private": true,
+  "workspaces": [
+    "apps/brand-web",
+    "apps/creator-mobile",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm --workspace server run dev",
+    "dev:web": "npm --workspace apps/brand-web run dev",
+    "dev:creator": "npm --workspace apps/creator-mobile run start",
+    "dev:creator:web": "npm --workspace apps/creator-mobile run web",
+    "build": "npm --workspace apps/brand-web run build && npm --workspace server run build",
+    "typecheck": "npm --workspace apps/brand-web run typecheck && npm --workspace server run typecheck"
+  },
+  "devDependencies": {
+    "@babel/helpers": "^7.29.10",
+    "caniuse-lite": "^1.0.30001819",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}
